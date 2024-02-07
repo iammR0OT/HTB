@@ -48,19 +48,19 @@ $ echo "10.10.11.254   skyfall.htb" | sudo tee -a /etc/hosts
 
 The webpage is running the SKYFALL website, which deals in data management and Sky Storage, with different pages linked on the **navbar**.
 
-![[Pasted image 20240207170725.png]]
+![Pasted image 20240207170725](https://github.com/iammR0OT/HTB/assets/74102381/2d1566e0-2996-470d-8104-4f3e928adbec)
 
 All the links lead to the same page, which is our main page, and we found nothing interesting there except a subdomain called `demo.skyfall.htb` present on the demo section. Let's also add this to our local DNS file.
 
-![[Pasted image 20240207171019.png]]
+![Pasted image 20240207171019](https://github.com/iammR0OT/HTB/assets/74102381/3c9865f4-8c83-43df-b386-5e5aaaaf7255)
   
 Let's move to the `demo.skyfall.htb` website and see what is there. A simple login page is running, and demo login credentials are provided to us on the page top. So, we can log into the webpage using the demo credentials.
 
-![[Pasted image 20240207171547.png]]
+![Pasted image 20240207171547](https://github.com/iammR0OT/HTB/assets/74102381/3e577c9e-0f7a-42c4-9802-bcfe7d638703)
   
 After logging in using the demo credentials, the website redirects us to the index page. This is a **Sky Storage** Dashboard, where we can upload and download our files.
 
-![[Pasted image 20240207171832.png]]
+![Pasted image 20240207171832](https://github.com/iammR0OT/HTB/assets/74102381/5466282c-968d-4ef9-baa1-5e344501676a)
 
 #### Tech Stack
 
@@ -97,18 +97,18 @@ MinIO is an open-source **object storage server** that is compatible with the **
   
 But the **MinIO Metrics** page is returning a 403 Forbidden error. However, I really want to see the content inside it. I tried different 403 bypass techniques, and the **CRLF** technique works, which involves adding `%0a` at the end of the file name.
 
-![[Pasted image 20240207173308.png]]
+![Pasted image 20240207173308](https://github.com/iammR0OT/HTB/assets/74102381/acc2f16c-41d4-4742-b398-abf25847ad4f)
 
-![[Pasted image 20240207173402.png]]
+![Pasted image 20240207173402](https://github.com/iammR0OT/HTB/assets/74102381/86d9cd95-8a0e-4901-8d1d-281f2f233438)
 
 At the very last entry point, I discovered the **minio_endpoint_url** which is:
 `http://prd23-s3-backend.skyfall.htb/minio/v2/metrics/cluster`. 
 
-![[Pasted image 20240206181506.png]]
+![Pasted image 20240206181506](https://github.com/iammR0OT/HTB/assets/74102381/d594175c-4e78-4f66-83fe-10b6d27a6fd1)
 
 Let's also add this to our local DNS file and check what is present on that MinIO endpoint. There is numerical data about the performance and health of systems and applications present, which is scraped from HTTP endpoints. I went through all the data but didn't find anything interesting there.
 
-![[Pasted image 20240207173947.png]]
+![Pasted image 20240207173947](https://github.com/iammR0OT/HTB/assets/74102381/c2055108-3743-46f2-8c8d-9584175b0749)
 
 After finding nothing from that endpoint, I searched for recent CVEs related to **MinIO** on Google and found one **Information Disclosure Vulnerability** known as `CVE-2023-28432` in MinIO. This vulnerability affects the `minio/bootstrap/v1/verify` endpoint, which leaks all environment variables, including **MINIO_SECRET_KEY** and **MINIO_ROOT_PASSWORD**. The vulnerable code is located in the **VerifyHandler** function in the **bootstrap-peer-server.go** file of the MinIO source code. Exploiting this vulnerability could allow an attacker to access and manipulate data stored in the MinIO cluster without proper authorization. [Reference](https://www.pingsafe.com/blog/cve-2023-28432-minio-information-disclosure-vulnerability/)
 
@@ -236,9 +236,9 @@ $ grep -rni -e "Password" -e "User" -e "API" -e "Token" -e "SSH" -e "askyy"
 - **-i** for case insensitive 
 - **-e** to take each word as saperate word
 
-![[Pasted image 20240207202925.png]]
+![Pasted image 20240207202925](https://github.com/iammR0OT/HTB/assets/74102381/5412fdcd-cd5f-46c0-a581-1a8dcae7a96e)
 
-![[Pasted image 20240207202946.png]]
+![Pasted image 20240207202946](https://github.com/iammR0OT/HTB/assets/74102381/eb3165c7-cd5d-4132-9782-63e725aa14e8)
 
 Here, I found three interesting things: **VAULT_API_DIR**, **VAULT_TOKEN**, and **id_rsa** for the **askyy** user. I tried to log in using the **id_rsa** key, but it didn't work. I also tried to crack the key of **id_rsa** using **John**, but that also didn't work.
 
@@ -248,7 +248,7 @@ When **id_rsa** didn't work, I moved to the **VAULT**. I Googled Vault and found
 
 You can download Vault from [here](https://developer.hashicorp.com/vault/install). Let's look at the help section of Vault. We can read and write, delete, list secrets.
 
-![[Pasted image 20240207205358.png]]
+![Pasted image 20240207205358](https://github.com/iammR0OT/HTB/assets/74102381/2dd8c3c8-daf5-4e52-9bb5-1382550fe022)
   
 Now, let's connect to Vault using the token we got before. [Reference](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-dev-server#set-environment-variables) First, export the **vault address** in an environmental variable. This will configure the Vault client to talk to the dev server. Then, export the Vault Token in another environmental variable. After setting both values, check the server status to see if it is running or not.
 
@@ -260,7 +260,7 @@ $ ./vault status
   
 And Vault is connected successfully.
 
-![[Pasted image 20240207203804.png]]
+![Pasted image 20240207203804](https://github.com/iammR0OT/HTB/assets/74102381/d2c2c072-71f7-4c55-9823-977ddd16ce4f)
   
 After going through the documentation of Vault, I discovered a page named **One-Time SSH Password**.
 #### One-Time SSH Passwords
@@ -296,13 +296,13 @@ $ ./vault ssh -role dev_otp_key_role -mode otp askyy@10.10.11.254
   
 I got a shell as the **askyy** user.
 
-![[Pasted image 20240207211234.png]]
+![Pasted image 20240207211234](https://github.com/iammR0OT/HTB/assets/74102381/7cb8a244-af62-44d3-b9b3-be430ee67d43)
 
 # Privilege Escalation
 
 I ran `sudo -l` to check if there is any program the **askyy** user can run on behalf of the root user, and it turns out that **askyy** can run **vault-unseal**. 
 
-![[Pasted image 20240207211608.png]]
+![Pasted image 20240207211608](https://github.com/iammR0OT/HTB/assets/74102381/c93bec98-90ac-4a54-8a4b-e6717112e1b9)
 
 When I go to the GitHub page of **vault-unseal**, it shows me four options. [Reference](https://github.com/lrstanley/vault-unseal?tab=readme-ov-file#gear-usage)
 - **-v** for version detection
@@ -312,11 +312,11 @@ When I go to the GitHub page of **vault-unseal**, it shows me four options. [Ref
  
 But on our tool's page, it shows **-d**, which is not documented on the official page of **vault-unseal**. So, I asked ChatGPT about this option, and it says that **-d** is mostly used for debugging purposes in different command-line tools. So, I ran **vault-unseal** with **-d** and noticed that it creates a **debug.log** file in the current working directory. When I tried to access it, it said "permission denied."
 
-![[Pasted image 20240207214700.png]]
+![Pasted image 20240207214700](https://github.com/iammR0OT/HTB/assets/74102381/dc05ce39-fe01-4d5b-a7ff-c06a5d8a9cac)
   
 Then, I created a file with the name **debug.log** so that next time when **vault-unseal** tries to save the debug content, it will save in our file. This way, we can read it.
 
-![[Pasted image 20240207215109.png]]
+![Pasted image 20240207215109](https://github.com/iammR0OT/HTB/assets/74102381/74a4cf3b-1b05-471c-ad48-49e7caaca27a)
   
 And we found the TOKEN of the root user and the PATH. Let's try to access the Vault of the root account. The process will be the same, just we will access the **admin_otp_key_path** instead of the **dev_otp_key_path**.
 
@@ -326,13 +326,13 @@ $ export VAULT_TOKEN="hvs.I0ewVsmaKU1SwVZAKR3T0mmG"
 $ ./vault status
 ```
 
-![[Pasted image 20240207215738.png]]
+![Pasted image 20240207215738](https://github.com/iammR0OT/HTB/assets/74102381/2b662b52-f3fd-4175-b177-8ff47ed1c511)
 
 ```bash
 ./vault ssh -role admin_otp_key_role -mode otp root@10.10.11.254
 ```
 
-![[Pasted image 20240207215929.png]]
+![Pasted image 20240207215929](https://github.com/iammR0OT/HTB/assets/74102381/dd72a91c-affb-4661-aa53-6e492e3c72b6)
 
 # Flags
 user : 05df3abc1.........8261e6b5a9db5
