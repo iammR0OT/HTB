@@ -93,7 +93,7 @@ On the Sky Storage Dashboard, I discovered a **MinIO Metrics** page.
 
 MinIO is an open-source **object storage server** that is compatible with the **Amazon S3** cloud storage service. It allows users to store unstructured data such as **photos**, **videos**, **log** **files**, **backups**, and other types of large **binary** or **text** objects. MinIO is designed to be **lightweight**, **scalable**, and **highly available**, making it suitable for a wide range of use cases from small businesses to large enterprises. It is written in **Go** programming language and can run on a variety of platforms including Linux, macOS, and Windows. MinIO supports features like **erasure coding**, **data encryption**, and **multi-tenancy**, making it a versatile solution for building private or public cloud storage infrastructure.
 
-![[Pasted image 20240207172231.png]]
+![Pasted image 20240207172231](https://github.com/iammR0OT/HTB/assets/74102381/00537833-e6a4-483f-b0d6-cad492aa950f)
   
 But the **MinIO Metrics** page is returning a 403 Forbidden error. However, I really want to see the content inside it. I tried different 403 bypass techniques, and the **CRLF** technique works, which involves adding `%0a` at the end of the file name.
 
