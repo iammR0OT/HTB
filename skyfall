@@ -48,7 +48,7 @@ $ echo "10.10.11.254   skyfall.htb" | sudo tee -a /etc/hosts
 
 The webpage is running the SKYFALL website, which deals in data management and Sky Storage, with different pages linked on the **navbar**.
 
-
+![Pasted image 20240207170725](https://github.com/iammR0OT/HTB/assets/74102381/2d1566e0-2996-470d-8104-4f3e928adbec)
 
 All the links lead to the same page, which is our main page, and we found nothing interesting there except a subdomain called `demo.skyfall.htb` present on the demo section. Let's also add this to our local DNS file.
 
