@@ -18,11 +18,11 @@ Now Let's run the depth scan on these specific ports using
 $ nmap -p22,80 -sC -sV -A -T4 10.10.10.175 -oN scan.txt
 ```
 
-**-sC** is to run all the default scripts
-**-sV** for service and version detection
-**-A** to check all default things
-**-T4** for aggressive scan
-**-oN** to write the result into a specified file
+- **-sC** is to run all the default scripts
+- **-sV** for service and version detection
+- **-A** to check all default things
+- **-T4** for aggressive scan
+- **-oN** to write the result into a specified file
 
 ```nmap
 PORT   STATE SERVICE VERSION
