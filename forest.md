@@ -7,15 +7,15 @@ Forest in an easy difficulty Windows Domain Controller (DC), for a domain in whi
 # User
 ## Enumeration through Nmap
 
-First of all we will go with nmap to scan the whole network and check for services running on the network. To scan the whole network and find all the open ports i use **-p-** with **--min-rate 10000** to scan network faster from **nmap** and i found a list of open ports on the network
+First of all, we will conduct an nmap scan to analyze the entire network and identify the services running on it. To scan all ports and discover any open ones, I'll utilize the `-p-` flag along with `--min-rate 10000` to expedite the network scan with nmap. This will provide us with a comprehensive list of open ports across the network.
 
 <img width="594" alt="Pasted image 20240103225607" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/f52d2c91-ce1e-44af-8375-d0cfdb7a5933">
 
-Let's filter these ports and check for services running on them. To filter out these ports, I used two different utilities, tr and cut in Kali. tr is used to replace words, and cut is used to extract specific content from the file. The command I used to filter out open ports is cat nmap.txt | cut -d ' ' -f1 | tr -d '/tcp' | tr '\n' ','.
+Let's filter these ports and inspect the services running on them. I used two different utilities, tr and cut, in Kali Linux for this purpose. **tr** is employed to replace characters, while **cut** is utilized to extract specific content from the file. The command I used to filter out open ports is `cat nmap.txt | cut -d ' ' -f1 | tr -d '/tcp' | tr '\n' ','`.
 
 <img width="876" alt="Pasted image 20240103225839" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/4fbe5c5c-d1ad-4c8d-b61f-3706453ba01b">
 
-Now, let's run the service check on these specific ports using 
+Now, let's run a service check on these specific ports using.
 
 ```bash
 $ nmap -p88,135,139,389,445,464,593,636,3268,3269,5985,9389,47001,49664,49665,49666,49667,49671,49676,49677,49682,49694,49711 -sCV -A -T4 10.10.10.161 -oN scan.txt
@@ -74,7 +74,7 @@ Host script results:
 ```
 ## Information Gathering
 
-Through Nmap we found port 53 **DNS** is open which can be used to perform zone transfer, 88 **kerberose** is open which can be used to for enumeration purpose here, 139 & 445 **SMB** ports are open and can be used to enumerate shares with anonymous user for initial access, 389 **ldap** port is open, **5985 winrm** port is opened which can be used to login into machine if somehow we managed to obtain a valid credentials. Nmap discover Doamin name by using ldap scripts which is **htb.local**. Let's add this to our local DNS file called `/etc/hots` so that our computer can resolve this domain. 
+Through Nmap, we found that port 53 (DNS) is open, which can be used to perform zone transfers. Port 88 (Kerberos) is also open, useful for enumeration purposes. Additionally, ports 139 and 445 (SMB) are open, which can be used to enumerate shares with anonymous user access for initial access. Port 389 (LDAP) and port 5985 (WinRM) are also open, with the latter potentially allowing login if valid credentials are obtained. Nmap discovered the domain name as "htb.local" using LDAP scripts. Let's add this domain to our local DNS file called "/etc/hosts" so that our computer can resolve it.
 
 ```bash
 $ echo "10.10.10.161   htb.local" | sudo tee -a /etc/hosts
@@ -82,9 +82,9 @@ $ echo "10.10.10.161   htb.local" | sudo tee -a /etc/hosts
 
 ### SMB 139 & 445
 
-**Server Message Block** (SMB) is a network file-sharing protocol that allows applications on a computer to read and write to files and to request services from server programs in a computer network. It is commonly used in Windows environments for sharing `files, printers`, and other resources.
+**Server Message Block** (SMB) is a network file-sharing protocol that enables applications on a computer to read and write files and request services from server programs within a computer network. It is widely used in Windows environments for sharing files, printers, and other resources.
 
-`smbclient` is a command-line tool that allows you to access and interact with servers that use the Server Message Block (SMB) protocol.
+**smbclient** is a command-line utility that facilitates access to and interaction with servers utilizing the Server Message Block (SMB) protocol.
 
 ```bash
 $ smbclient -L 10.10.10.161
@@ -94,9 +94,9 @@ $ smbclient -L 10.10.10.161
 
 <img width="663" alt="Pasted image 20231130195233" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/f89a3cff-6e4c-4dac-824d-3c36587a34fd">
   
-We successfully logged in using anonymous credentials to SMB but didn't find any shares. Since anonymous login is enabled, we can enumerate the domain using **[enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/)**.
+We successfully logged in using anonymous credentials to SMB but didn't find any shares. Since anonymous login is enabled, we can enumerate the domain using [enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/).
 
-[enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/) is a Linux utility used for enumerating information from **Windows** and **Samba** systems. It is designed to extract valuable information during the post-exploitation phase of penetration testing or security assessments. The tool is particularly useful for **gathering information** about `shares, users, and other details from SMB (Server Message Block) servers.` You can use [enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/) -h for its help menu.
+[enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/) is a Linux utility used for enumerating information from **Windows** and **Samba** systems. It is designed to extract valuable information during the post-exploitation phase of penetration testing or security assessments. The tool is particularly useful for **gathering information** about shares, users, and other details from SMB (Server Message Block) servers. You can use [enum4linux](https://cheatsheet.haax.fr/network/services-enumeration/135_rpc/) -h for its help menu.
 
 ```bash
 $ enum4linux -d -r -o 10.10.10.161
@@ -106,16 +106,17 @@ $ enum4linux -d -r -o 10.10.10.161
 -  **-r** is for enumerating users via RID cycling
 - **-o** is for OS information
 
-We got the domain **SID** (Security Identifier), which we can use to perform **Silver ticket** or **Golden Ticket** attacks and some usernames.
-	**SID (Security Identifier):** SIDs are a component of a security database that security authorities can use **to identify the user and the permissions that user is entitled to**. When users log on to a Windows system, the system generates an access token that includes the user SID, the SID of any groups the user belongs to, and the user privilege level. `S-1-5-21-3072663084-364016917-1341370565`
+We obtained the domain SID (Security Identifier), which we can use to perform Silver ticket or Golden Ticket attacks, as well as some usernames.
+
+**SID (Security Identifier):** SIDs are a component of a security database that security authorities can use to identify the user and the permissions that user is entitled to. When users log on to a Windows system, the system generates an access token that includes the user SID, the SID of any groups the user belongs to, and the user privilege level. The SID we obtained is `S-1-5-21-3072663084-364016917-1341370565`.
 
 <img width="597" alt="Pasted image 20230720231239" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/baaba90f-dc41-454f-856a-ad3e6a3679ab">
  
- Lets save these names in a file.
+Let's save these names in a file.
  
 ### 389 LDAP
 
-We will use the tool **ldapsearch** to enumerate the domain LDAP service. **ldapsearch** is a command-line tool that **opens a connection to an LDAP server, binds to it, and performs a search using a filter**. The results are then displayed in the LDIF. The LDIF is used to represent LDAP entries in a simple text format. **ldapsearch** is similar to **enum4linux** but focuses on LDAP (lightweight directory access protocol).
+We will use the tool **ldapsearch** to enumerate the domain LDAP service. **ldapsearch** is a command-line tool that **opens a connection to an LDAP server, binds to it, and performs a search using a filter**. The results are then displayed in LDIF format. LDIF is used to represent LDAP entries in a simple text format. **ldapsearch** is similar to **enum4linux** but focuses on LDAP (Lightweight Directory Access Protocol).
 
 ```bash
 $ ldapsearch -x -b "dc=htb,dc=local" "*" -H ldap://10.10.10.161 | grep userPrincipalName
@@ -127,9 +128,9 @@ $ ldapsearch -x -b "dc=htb,dc=local" "*" -H ldap://10.10.10.161 | grep userPrinc
 - **-b** is for the base DN for the search.
 - **grep userPrincipalName** to get the user's list present in the domain
 
-The Base DN is the starting point an LDAP server uses when searching for users authentication within Active Directory. Example: **DC=example-domain,DC=com.
+The Base DN is the starting point an LDAP server uses when searching for user authentication within Active Directory. For example: **DC=example-domain,DC=com**.
 
- The **userPrincipalName** (UPN) is the most common logon name for Windows users. Users typically use their UPN to log on to a domain. This attribute is an indexed string that is single-valued.
+The **userPrincipalName** (UPN) is the most common logon name for Windows users. Users typically use their UPN to log on to a domain. This attribute is a single-valued indexed string.
 
 <img width="591" alt="Pasted image 20230720231146" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/d9eca00a-6ed6-4b1c-922d-4b0287584cee">
 
@@ -154,8 +155,9 @@ We found a user with a hash, Let's proceed to crack it.
 
 #### John The Ripper
 
-**John the Ripper** is a free password cracking  tool. Originally developed for the Unix operating system, it can run on fifteen different platforms (eleven of which are architecture-specific versions of **Unix**, **DOS**, **Win32**, **BeOS**, and **OpenVMS**). It is among the most frequently used password testing and breaking programs as it combines a number of password crackers into one package, autodetects password **hash** types, and includes a customizable cracker. It can be run against various encrypted password formats.
-Lets use **john the ripper** to crack **svc-alfresco** user password. John The Ripper crack it within a minute.
+**John the Ripper** is a free password cracking tool. Originally developed for the Unix operating system, it can run on fifteen different platforms, including Unix, DOS, Win32, BeOS, and OpenVMS. It is among the most frequently used password testing and breaking programs as it combines a number of password crackers into one package, autodetects password hash types, and includes a customizable cracker. It can be run against various encrypted password formats.
+
+Let's use **John the Ripper** to crack the password of the **svc-alfresco** user. John The Ripper cracked it within a minute.
 
 ```bash
 $ john hash -w=/usr/share/wordlists/rockyou.txt
@@ -164,7 +166,8 @@ $ john hash -w=/usr/share/wordlists/rockyou.txt
 <img width="623" alt="Pasted image 20230720233836" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/6eef3aab-8fdb-4b78-a6b5-b9881ae066ce">
 
 #### Shell using Evil-Winrm
-**Evil-WinRM** is an open-source, command-line-based tool that provides remote shell access to Windows machines over **WinRM** (Windows Remote Management). **Evil-WinRM** exploits weak configurations present in the WinRM service to establish a remote shell session on a targeted windows machine, allowing the attacker to perform administrative tasks and run scripts
+
+**Evil-WinRM** is an open-source, command-line-based tool that provides remote shell access to Windows machines over WinRM (Windows Remote Management). **Evil-WinRM** exploits weak configurations present in the WinRM service to establish a remote shell session on a targeted Windows machine, allowing the attacker to perform administrative tasks and run scripts.
 
 ```bash
 $ evil-winrm -i 10.10.10.161 -u 'svc-alfresco' -p 's3rvice'
@@ -179,7 +182,7 @@ $ evil-winrm -i 10.10.10.161 -u 'svc-alfresco' -p 's3rvice'
 # Privilege Escalation
 ## Domain analysis using BloodHound
 
-Bloodhound is a tool that is generally used by **attackers to visually map an organization’s Active Directory structure and analyze it to find its weaknesses**. It uses graph theory to reveal the hidden and often unintended relationships within an Active Directory or Azure environment. Attackers can use BloodHound to easily identify highly complex attack paths that would otherwise be impossible to quickly identify
+Bloodhound is a tool commonly used by attackers to visually map an organization’s Active Directory structure and analyze it to find weaknesses. It employs graph theory to reveal hidden and often unintended relationships within an Active Directory or Azure environment. With BloodHound, attackers can easily identify highly complex attack paths that would otherwise be difficult to detect quickly.
 
 ```bash
 $ bloodhound-python -c All -u svc-alfresco -p s3rvice -d htb.local -ns 10.10.10.161 --zip
@@ -194,13 +197,13 @@ $ bloodhound-python -c All -u svc-alfresco -p s3rvice -d htb.local -ns 10.10.10.
 
 <img width="932" alt="Pasted image 20230722140546" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/d51f9082-4db1-4390-901a-2ca01b2fa861">
   
-This creates a JSON file. Let's upload it to BloodHound to visualize the data. For comprehensive domain enumeration, we can also utilize **SharpHound**, an investigator designed to gather information throughout the domain. **SharpHound** is particularly useful for reconnaissance. Execute `./SharpHound.exe --CollectionMethods All`. Once completed, download the results to your local machine, run BloodHound, upload the data, and commence investigation on the graphs.
+This creates a JSON file. Let's upload it to BloodHound to visualize the data. For comprehensive domain enumeration, we can also utilize **SharpHound**, an investigator designed to gather information throughout the domain. **SharpHound** is particularly useful for reconnaissance. Execute `./SharpHound.exe --CollectionMethods All`. Once completed, download the results to your local machine, run BloodHound, upload the data, and begin investigating the graphs.
 
 <img width="953" alt="Pasted image 20240104000743" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/85425653-a90f-4b43-9e92-21b1b102a876">
 
 <img width="881" alt="Pasted image 20240104000824" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/a3f3b1e7-ab2f-4029-8d7d-91b245173657">
 
-To run Bloodhound we first need to start **neo4j** a graph database system. 
+To run BloodHound, we first need to start **Neo4j**, which is a graph database system.
 
 <img width="359" alt="Pasted image 20240109135359" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/86a88612-007a-44ad-9108-c3496e9da30c">
 
@@ -212,11 +215,10 @@ After successfully uploading the data, the investigation part begins. Mark the *
 
 <img width="672" alt="Pasted image 20240104001028" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/9f93fb62-ca97-41de-95b7-515b31725418">
 
-Now in Analysis tab Select **Shortest Path -> Shortest Path to Domain Admins From owned Principals**
+Now, in the Analysis tab, select **Shortest Path -> Shortest Path to Domain Admins From owned Principals**.
 
 <img width="247" alt="Pasted image 20240104001106" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/93c87abd-d2ab-4d4c-bc63-863681542da2">
 
-  
 Let's see if we can find any useful principals.
 
 <img width="494" alt="Pasted image 20240104001403" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/3a069c64-b537-4992-ae64-ca950912e2d7">
@@ -229,11 +231,11 @@ Let me explain the graph to you.
 - Account Operator have **Generic ALL** permissions on Enterprise Key Admins group
 - Enterprise Key Admin have write to **AddKeyCredientialLink** to Domain
   
-So, here is a summary: **svc_alfresco** is a member of the Service account group, which is a member of Privileged IT Account, and which is a member of the Account Operator Group. This implies that we can create new users in the domain. Consequently, our user, svc_alfresco, is also a member of the Account Operator Group, which has **Generic All** rights on the Domain Key Admins group. This allows us to add our new user to that Key Admins group. In the end, the Enterprise Key Admins have the **AddKeyCredentialLink** write over the Domain, which we can use to perform a **Shadow Credentials** attack.
+So, here is a summary: **svc_alfresco** is a member of the Service account group, which is a member of the Privileged IT Account group, and which is a member of the Account Operator Group. This implies that we can create new users in the domain. Consequently, our user, svc_alfresco, is also a member of the Account Operator Group, which has **Generic All** rights on the Domain Key Admins group. This allows us to add our new user to that Key Admins group. In the end, the Enterprise Key Admins have the **AddKeyCredentialLink** write over the Domain, which we can use to perform a **Shadow Credentials** attack.
 
 We can't gain admin access through a Shadow Credentials attack because it can only be used for persistence. So, I decided to check **Transitive Object Control** (the number of objects this user can gain control of by performing ACL-only based attacks in Active Directory). In other words, it represents the maximum number of objects the user can control without needing to pivot to any other system in the network, just by manipulating objects in the directory.
 
-By exploring **Transitive Object Control**, I discovered that the **Privileged IT Account** group has access to the **Account Operator Group**, and the **Account Operator group** has **GenericAll** writes on the **Exchange Windows Permissions** group, which, in turn, has **WriteDacl** write on the Domain.
+By exploring **Transitive Object Control**, I discovered that the **Privileged IT Account** group has access to the **Account Operator Group**, and the **Account Operator group** has **GenericAll** rights on the **Exchange Windows Permissions** group, which, in turn, has **WriteDacl** rights on the Domain.
 
 <img width="934" alt="Pasted image 20240107145103" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/9a27472e-34d7-4bb8-bb80-55743c603d5e">
 
