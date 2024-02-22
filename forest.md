@@ -1,6 +1,6 @@
 # Machine Overview
 
-Forest in an easy difficulty Windows Domain Controller (DC), for a domain in which Exchange Server has been installed. The DC is found to allow anonymous LDAP binds, which is used to enumerate domain users. The password for a service account with **Kerberos pre-authentication** disabled can be cracked to gain a foothold as **svc-alfresco**. The service account is found to be a member of the Account Operators group, which can be used to add users to **privileged Exchange groups**. The Exchange group membership is leveraged to gain **DCSync** privileges on the domain and dump the NTLM hashes. The admin NT hash is used to gain shell as **Administrator** through a **Pass-the-Hash** attack.
+Forest is an easy difficulty Windows Domain Controller (DC), for a domain in which Exchange Server has been installed. The DC is found to allow anonymous LDAP binds, which is used to enumerate domain users. The password for a service account with **Kerberos pre-authentication** disabled can be cracked to gain a foothold as **svc-alfresco**. The service account is found to be a member of the Account Operators group, which can be used to add users to **privileged Exchange groups**. The Exchange group membership is leveraged to gain **DCSync** privileges on the domain and dump the NTLM hashes. The admin NT hash is used to gain shell as **Administrator** through a **Pass-the-Hash** attack.
 
 ![Pasted image 20240222150401](https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/3958bb05-0ef9-43bd-bd6e-c3234e2a1c91)
 
