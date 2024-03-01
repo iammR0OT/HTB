@@ -14,6 +14,7 @@ $ nmap -p- --min-rate 10000 10.10.10.175 -oN ini.txt && cat ini.txt | cut  -d ' 
 ```
 <img  alt="Pasted image 20240108215233" src="https://github.com/iammR0OT/HTB/assets/74102381/941b74ce-1496-4a6c-a53b-ac4c085ebdf4">
 
+
 <img  alt="Pasted image 20240108215332" src="https://github.com/iammR0OT/HTB/assets/74102381/614821d2-7964-4169-91a1-c41895daf13f">
 
 Now, let's run a thorough scan on these specific ports using...
@@ -431,6 +432,7 @@ Info: Establishing connection to remote endpoint
 # Flags
 
 User : 338784697d48cf4........4731361025
+
 Root : f64948489f........b50ee303995272
 
 # Happy Hacking ❤
