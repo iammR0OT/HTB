@@ -12,9 +12,9 @@ First, we'll use **nmap** to scan the entire network and identify the services r
 ```bash
 $ nmap -p- --min-rate 10000 10.10.10.175 -oN ini.txt && cat ini.txt | cut  -d ' ' -f1 | tr -d '/tcp' | tr '\n' ','
 ```
-<img width="603" alt="Pasted image 20240108215233" src="https://github.com/iammR0OT/HTB/assets/74102381/941b74ce-1496-4a6c-a53b-ac4c085ebdf4">
+<img  alt="Pasted image 20240108215233" src="https://github.com/iammR0OT/HTB/assets/74102381/941b74ce-1496-4a6c-a53b-ac4c085ebdf4">
 
-<img width="601" alt="Pasted image 20240108215332" src="https://github.com/iammR0OT/HTB/assets/74102381/614821d2-7964-4169-91a1-c41895daf13f">
+<img  alt="Pasted image 20240108215332" src="https://github.com/iammR0OT/HTB/assets/74102381/614821d2-7964-4169-91a1-c41895daf13f">
 
 Now, let's run a thorough scan on these specific ports using...
 
@@ -72,19 +72,19 @@ Host script results:
 
 Through Nmap, we discovered that port 53 (DNS) is open, which can be used to perform zone transfers. Port 80 (HTTP) is also open, along with port 88 (Kerberos), which can be useful for enumeration purposes. Additionally, ports 139 and 445 (SMB) are open, allowing enumeration of shares with anonymous user access for initial entry. Port 389 (LDAP) is open, as well as port 5985 (WinRM), which can facilitate machine login with valid credentials. Nmap identified the domain name as **EGOTISTICAL-BANK.LOCAL** using LDAP scripts. Let's add this information to our local DNS file called `/etc/hosts` for domain resolution on our computer.
 
-<img width="336" alt="Pasted image 20240108221312" src="https://github.com/iammR0OT/HTB/assets/74102381/b376b49e-1ea4-4dae-9b8e-db65078afe71">
+<img  alt="Pasted image 20240108221312" src="https://github.com/iammR0OT/HTB/assets/74102381/b376b49e-1ea4-4dae-9b8e-db65078afe71">
 
 ### Port 53 DNS
   
 Let's start by exploring port **53** (DNS) and attempt to perform a zone transfer using **dig** (**Domain Information Grabber**, used for retrieving information about DNS name servers. It is used for verifying and troubleshooting DNS problems and to perform DNS lookups). The command to perform the zone transfer is `dig axfr @10.10.10.175 EGOTISTICAL-BANK.LOCAL`. Here, **axfr** is a protocol used for zone transfers, allowing replication of DNS data across multiple DNS servers. However, we were unable to retrieve any useful information.
 
-<img width="605" alt="Pasted image 20240108221501" src="https://github.com/iammR0OT/HTB/assets/74102381/4a8955ed-0dbd-47a3-b53a-7d6c2390a47a">
+<img  alt="Pasted image 20240108221501" src="https://github.com/iammR0OT/HTB/assets/74102381/4a8955ed-0dbd-47a3-b53a-7d6c2390a47a">
 
 ### Port 80 http
 
 Now, let's move on to the next port, which is port **80** (HTTP). A simple bank website is running on this port, and it appears to be static, with no interaction with user input.
 
-<img width="768" alt="Pasted image 20240108222319" src="https://github.com/iammR0OT/HTB/assets/74102381/5c3d79bb-5e00-4c89-895e-5ea96c0b2168">
+<img  alt="Pasted image 20240108222319" src="https://github.com/iammR0OT/HTB/assets/74102381/5c3d79bb-5e00-4c89-895e-5ea96c0b2168">
 
 After scrolling down, I found the names of team members at the bank. These names could be very beneficial for us to perform an **AS-Rep Roasting** attack to check if any of the users have the privilege "Do Not Require Pre-Authentication". However, I'm not sure about the naming convention used inside the bank. Typically, it follows the format `<First Initial><Last Name>`. So, our username in the domain would be:
 	1. fsmith
@@ -94,7 +94,7 @@ After scrolling down, I found the names of team members at the bank. These names
 	5. hbear
 	6. skerb
 
-<img width="472" alt="Pasted image 20240108222605" src="https://github.com/iammR0OT/HTB/assets/74102381/1ffe0ed2-2927-4580-813f-f8372a80de05">
+<img  alt="Pasted image 20240108222605" src="https://github.com/iammR0OT/HTB/assets/74102381/1ffe0ed2-2927-4580-813f-f8372a80de05">
 
 ### Port 88 Kerberose
 
@@ -196,9 +196,9 @@ Now, moving on to the exploitation phase, we have a list of users, and Kerbrute 
 
 For exploitation, we'll use a tool called **GetNPUsers.py** from the **Impacket** toolkit. GetNPUsers.py allows us to retrieve domain users hash who have `Do not require Kerberos preauthentication` set and request their TGTs without knowing their passwords.
 
-<img width="945" alt="Pasted image 20240109004923" src="https://github.com/iammR0OT/HTB/assets/74102381/737d99df-450b-4f83-919c-a10f59dd9e5b">
+<img  alt="Pasted image 20240109004923" src="https://github.com/iammR0OT/HTB/assets/74102381/737d99df-450b-4f83-919c-a10f59dd9e5b">
 
-<img width="958" alt="Pasted image 20240109004957" src="https://github.com/iammR0OT/HTB/assets/74102381/c4e0d956-b539-49d6-b628-62aeb158c92f">
+<img alt="Pasted image 20240109004957" src="https://github.com/iammR0OT/HTB/assets/74102381/c4e0d956-b539-49d6-b628-62aeb158c92f">
 
 Let's try to crack it using **hashcat**.
 
@@ -209,7 +209,7 @@ $ hashcat hashes rockyou.txt
  we successfully able to crack the password
 	`Thestrokes23`
 	
-<img width="953" alt="Pasted image 20240109005140" src="https://github.com/iammR0OT/HTB/assets/74102381/ac04263e-e476-4566-96de-60b82fbbb0d1">
+<img alt="Pasted image 20240109005140" src="https://github.com/iammR0OT/HTB/assets/74102381/ac04263e-e476-4566-96de-60b82fbbb0d1">
 
 ### Shell as fsmith
 
@@ -223,7 +223,7 @@ $ evil-winrm -i 10.10.10.175 -u fsmith -p Thestrokes23
 - **-u** for user name 
 - **-p** for user password.
 
-<img width="949" alt="Pasted image 20240109005709" src="https://github.com/iammR0OT/HTB/assets/74102381/766193b5-cb5a-4152-8ecd-1667827ce8c5">
+<img alt="Pasted image 20240109005709" src="https://github.com/iammR0OT/HTB/assets/74102381/766193b5-cb5a-4152-8ecd-1667827ce8c5">
 
 # Privilege Escalation
 
@@ -324,24 +324,24 @@ egotisticalbank\svc_loanmgr
 
 Now that we're in the `loan_manager` account, let's run SharpHound, an investigator used to gather information from all over the domain. SharpHound is preferable for loot. Run the command `./SharpHound.exe --CollectionMethods All`. After it completes, download it to your local machine, and run BloodHound. Upload the data to BloodHound and start investigating the graphs. We will run SharpHound the same way we ran WinPEAS before.
 
-<img width="954" alt="Pasted image 20240109135044" src="https://github.com/iammR0OT/HTB/assets/74102381/a23cea85-f911-4b58-825b-4e394db0ade9">
+<img  alt="Pasted image 20240109135044" src="https://github.com/iammR0OT/HTB/assets/74102381/a23cea85-f911-4b58-825b-4e394db0ade9">
 
 To run BloodHound, we first need to start **Neo4j**, a graph database system. Then, upload the data collected by **SharpHound** to **BloodHound**.
 
-<img width="359" alt="Pasted image 20240109135359" src="https://github.com/iammR0OT/HTB/assets/74102381/fbdac531-588e-46a3-b495-2a8d6aae55ee">
+<img alt="Pasted image 20240109135359" src="https://github.com/iammR0OT/HTB/assets/74102381/fbdac531-588e-46a3-b495-2a8d6aae55ee">
 
   
 To start BloodHound, open a new terminal and type `bloodhound`, then press Enter. If it's your first time running BloodHound, you'll need to reset the default credentials, which are `neo4j:neo4j`. After logging in, upload the zip file created by SharpHound. You can either drag and drop the file into BloodHound or use the "Upload Data" button. Wait for the data to upload into the database.
 
-<img width="296" alt="Pasted image 20240109135829" src="https://github.com/iammR0OT/HTB/assets/74102381/b8863678-1e0f-4c42-b45a-9996f2234f4a">
+<img alt="Pasted image 20240109135829" src="https://github.com/iammR0OT/HTB/assets/74102381/b8863678-1e0f-4c42-b45a-9996f2234f4a">
 
 After successfully uploading the data, it's time to start the investigation. Use the search bar to find both users **fsmith** and **svc_loanmgr**, then right-click on each user and select **Mark User as Owned**.
 
-<img width="745" alt="Pasted image 20240109140030" src="https://github.com/iammR0OT/HTB/assets/74102381/02e7b87b-5c70-4e62-8110-62a044b4fb7f">
+<img alt="Pasted image 20240109140030" src="https://github.com/iammR0OT/HTB/assets/74102381/02e7b87b-5c70-4e62-8110-62a044b4fb7f">
 
 Now, navigate to the Analysis tab and under the **Shortest Path** tab, select **Shortest Path to Domain Admins** from owned Principals. Here, we can see a graph indicating that our user **svc_loanmgr** has **DcSync** rights on the Domain. A DCSync attack involves using commands in **Microsoft Directory Replication Service Remote Protocol** (MS-DRSR) to mimic a domain controller (DC) and retrieve user credentials from another DC.
 
-<img width="839" alt="Pasted image 20240109140713" src="https://github.com/iammR0OT/HTB/assets/74102381/dfb61473-9c45-41d2-ab80-74639dc0aba5">
+<img alt="Pasted image 20240109140713" src="https://github.com/iammR0OT/HTB/assets/74102381/dfb61473-9c45-41d2-ab80-74639dc0aba5">
 
 ## Exploitation
 
