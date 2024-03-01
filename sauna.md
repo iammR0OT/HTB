@@ -2,7 +2,7 @@
 
 Sauna was an easy-rated Windows machine that involved exploiting the **As-Rep Roasting** attack to find the hash of the **fsmith** user, which was cracked using **hashcat**. For lateral movement, we obtained the clear text password of the **svc_loanmgr** user from Winlogon. **svc_loanmgr** has **DCSync** rights on the domain, which we used to dump the user's hashes and perform a **pass-the-hash** attack to gain access to the administrator account.
 
-<img width="348" alt="Pasted image 20240301111436" src="https://github.com/iammR0OT/HTB/assets/74102381/7b4d9332-00f1-48b5-86c6-07ec167d410f">
+<img alt="Pasted image 20240301111436" src="https://github.com/iammR0OT/HTB/assets/74102381/7b4d9332-00f1-48b5-86c6-07ec167d410f">
 
 # User 
 ## Scanning through Nmap
