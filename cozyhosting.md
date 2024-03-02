@@ -140,7 +140,7 @@ After some research, I discovered that we can use `${IFS}` as a space in Bash. *
 
 ![Pasted image 20240302152518](https://github.com/iammR0OT/HTB/assets/74102381/bd7c46b6-838a-4f98-9c39-a322df3eb982)
 
-Let's get a shell on the box. I mostly use [revshells.com]((https://www.revshells.com/) for reverse shell payloads. 
+Let's get a shell on the box. I mostly use [revshells.com](https://www.revshells.com/) for reverse shell payloads. 
 Start a listener on your attacking machine to receive the shell.
 
 ```bash
