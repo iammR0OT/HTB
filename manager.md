@@ -150,6 +150,7 @@ Host script results:
  Now we have some Valid username on the DC Lets try to perform password spray against it. first lets create a text file in which we will save all these names and we will check every name as a password against every username
  for password spraying we will use again our loving **crackmapexec**. `crackmapexec smb manager.htb -u user.txt -p user.txt --continue-on-success`. here **--continue-on-success** is to keep checking if it find any valid credientials. we found one valid account with password.
 	- operator:operator
+ 
  ![Screenshot from 2023-11-09 11-22-30](https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/49fc3737-b9a8-4ae9-8b53-3fe2c6a1fdf2)
  
  Lets check if it have access to some smb shares using again our loving **smbclient** using `smbclient   -L \\\\10.10.11.236\\ -U operator%operator`. But we didn't found any useful shares all these shares are default shares
