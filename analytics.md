@@ -1,6 +1,6 @@
 # Machine Overview
 
-**Analytics** was an easy-rated Linux machine, involving the exploitation of **CVE-2023-38646** for initial access and **CVE-202332629** for Privilege Escalation.
+**Analytics** was an easy-rated Linux machine, involving the exploitation of **CVE-2023-38646** for initial access and **CVE-2023-32629** for Privilege Escalation.
 
 <img  alt="Pasted image 20240322120647" src="https://github.com/iammR0OT/iammR0OT.github.io/assets/74102381/adce0329-b6e1-49bc-acd6-68eb1d6e2275">
 
