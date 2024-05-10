@@ -1,7 +1,8 @@
 # Network
 There are two `TCP` ports are open
-	22 : ssh is running and not vulnerable to Rce
-	80 : on 80 `2million.htb` is hosted which is old version of HTB
+	- 22 : ssh is running and not vulnerable to Rce
+ 
+	- 80 : on 80 `2million.htb` is hosted which is old version of HTB
 # Web
 There is old version of htb is running on port 80
 Nothing special found on home page except `JOIN NOW` page which is redirecting us to `/invite` page
