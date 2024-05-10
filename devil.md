@@ -33,7 +33,7 @@ After login successfully as Anonymous user we will now try to upload files on ft
 
  Now we found that the port 80 is also open lets find out what is running on that port
  
-	<img width="441" alt="Pasted image 20230718025202" src="https://github.com/iammR0OT/HTB/assets/74102381/d73f7428-49b9-47b0-975c-e1f21185cc35">
+<img alt="Pasted image 20230718025202" src="https://github.com/iammR0OT/HTB/assets/74102381/d73f7428-49b9-47b0-975c-e1f21185cc35">
 
 See some web files on ftp server 
 
