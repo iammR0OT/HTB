@@ -108,7 +108,7 @@ Through **Nmap** we found port **53 DNS** is open which can be used to perform z
 
 ```shell
 $ cat /etc/hosts | grep corp
-10.129.35.171  htb.corp authority.htb.corp
+10.129.35.171  htb.corp authority.htb
 ```
 
 ## 53 DNS
