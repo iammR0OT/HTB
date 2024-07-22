@@ -170,7 +170,9 @@ Let's find users and groups in AD using **lookupsid.py** tool from impacket tool
 
 ## SMB 139 & 445
 
-We also have SMB ports open, let's try to list out smb shares if are available publicly using **smbclient**(The smbclient lets you **send messages to workstations, display browse lists and connect to SMB shares**). The command will be `smbclient -N -L \\\\10.129.35.171\\` here **-N** is for no-pass and **-L** for listing shares. 
+We also have SMB ports open, let's try to list out smb shares if are available publicly using **smbclient**(The smbclient lets you **send messages to workstations, display browse lists and connect to SMB shares**). The command will be `smbclient -N -L \\\\10.129.35.171\\`
+- **-N** is for no-pass
+- **-L** for listing shares. 
 
 The **Development** share is of our interest because we have read rights on it.
 
