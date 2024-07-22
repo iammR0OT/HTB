@@ -381,7 +381,7 @@ $ certipy-ad req -u EVIL1$ -p 'MyStr0ngPass' -dc-ip 10.129.35.171 -ca AUTHORITY-
 - **-template** for template Name
 - **-upn** for User Principal Name (Name in the format of Email)
 
-![[Pasted image 20240721201954.png]]
+![Pasted image 20240721201954](https://github.com/user-attachments/assets/5994c7cf-f68f-43bb-9ff6-0643c0075f6b)
 
 Now we have certificate, Lets Sync our machine time with Target machine using. 
 
